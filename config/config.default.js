@@ -19,8 +19,8 @@ module.exports = appInfo => {
       port: 80,
       // hostname: '192.168.43.16',
       hostname: '127.0.0.1',
-    }
-};
+    },
+  };
 
   // use for cookie sign key, should change to your own and keep security
   config.keys = appInfo.name + '_1621940435439_115';

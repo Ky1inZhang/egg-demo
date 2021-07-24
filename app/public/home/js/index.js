@@ -1,100 +1,100 @@
-let hostname = location.origin;
-let req = axios.create({
+const hostname = location.origin;
+const req = axios.create({
   // baseURL: 'http://192.168.43.16:7001',
-  baseURL: hostname
-})
+  baseURL: hostname,
+});
 
-var getData = async (url) => {
+const getData = async url => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      req.get(url).then(res=>{			//url:http://127.0.0.1:80/api
+      req.get(url).then(res => {			// url:http://127.0.0.1:80/api
         resolve(res.data);
-      }).catch(err=>{
+      }).catch(err => {
         console.error(err);
       });
-    },0)
-  })
-}
+    }, 0);
+  });
+};
 
-                    
+
 function goAdd() {
-  var name = $('input[type=search]')[0].value;
-  if(name.length == 0 ) return false;
-  let user = JSON.parse(localStorage.getItem("user"));
-  if(user.length != 0) {
-    goUpdate(user[0].id,name);
+  const name = $('input[type=search]')[0].value;
+  if (name.length == 0) return false;
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user.length != 0 && name == user[0].name) {
+    goUpdate(name);
     return false;
   }
   $.alert({
-      title: '  ',
-      content: '  是否确认添加会员卡记录?',
-      animation: 'scale',
-      closeAnimation: 'bottom',
-      backgroundDismiss: true,
-      buttons: {
-           ok: {
-              text: '  ok  ',
-              btnClass: 'btn-blue',
-              action: function(){
-                  add(name)
-              }
-          }
-      }
+    title: '  ',
+    content: '  是否确认添加会员卡记录?',
+    animation: 'scale',
+    closeAnimation: 'bottom',
+    backgroundDismiss: true,
+    buttons: {
+      ok: {
+        text: '  ok  ',
+        btnClass: 'btn-blue',
+        action() {
+          add(name);
+        },
+      },
+    },
   });
 }
 async function add(name) {
-  let row = await this.getData(`add/${name}`);
-    if(row > 0) {
-      find(name);
-      tip('OK, 操作成功！');
-    }
+  const row = await this.getData(`add/${name}`);
+  if (row > 0) {
+    find(name);
+    tip('OK, 操作成功！');
+  }
 }
 
-$("#focus").keypress(function(event){
-    if(event.which === 13) { 
-        //点击回车要执行的事件
-        find();
-     }
-})
+$('#focus').keypress(function(event) {
+  if (event.which === 13) {
+    // 点击回车要执行的事件
+    find();
+  }
+});
 
-async function find (name){
+async function find(name) {
   name = name || $('input[type=search]')[0].value;
-  if(name.length == 0) {
+  if (name.length == 0) {
     all();
   } else {
-    let user = await this.getData(`find/${name}`);
-    localStorage.setItem("user",JSON.stringify(user));
-    $(".results").empty();
-    if(user.length != 0) {
+    const user = await this.getData(`find/${name}`);
+    localStorage.setItem('user', JSON.stringify(user));
+    $('.results').empty();
+    if (user.length != 0) {
       render(user);
     } else {
-      $(".results").append('<h3 id="inform">— 暂无记录 请点击+添加(10次/卡). —</h3>');
+      $('.results').append('<h3 id="inform">— 暂无记录 请点击+添加(10次/卡). —</h3>');
     }
   }
 }
 
-function goUpdate(name){
+function goUpdate(name) {
   $.alert({
-      title: '  ',
-      content: '  确认续卡？剩余次数将会累加。',
-      animation: 'scale',
-      closeAnimation: 'bottom',
-      backgroundDismiss: true,
-      buttons: {
-           ok: {
-              text: '  ok  ',
-              btnClass: 'btn-blue',
-              action: function(){
-                update(name);
-              }
-          }
-      }
+    title: '  ',
+    content: '  确认续卡？剩余次数将会累加。',
+    animation: 'scale',
+    closeAnimation: 'bottom',
+    backgroundDismiss: true,
+    buttons: {
+      ok: {
+        text: '  ok  ',
+        btnClass: 'btn-blue',
+        action() {
+          update(name);
+        },
+      },
+    },
   });
 }
 
-async function update (name) {
-  let row = await this.getData(`update/${name}`);
-  if(row > 0) {
+async function update(name) {
+  const row = await this.getData(`update/${name}`);
+  if (row > 0) {
     find(name);
     tip('OK, 操作成功！');
   }
@@ -102,40 +102,40 @@ async function update (name) {
 
 function goCost(name) {
   $.alert({
-      title: '  ',
-      content: '  确认消费？剩余次数将-1。',
-      animation: 'scale',
-      closeAnimation: 'bottom',
-      backgroundDismiss: true,
-      buttons: {
-           ok: {
-              text: '  ok  ',
-              btnClass: 'btn-blue',
-              action: function(){
-                cost(name);
-              }
-          }
-      }
+    title: '  ',
+    content: '  确认消费？剩余次数将-1。',
+    animation: 'scale',
+    closeAnimation: 'bottom',
+    backgroundDismiss: true,
+    buttons: {
+      ok: {
+        text: '  ok  ',
+        btnClass: 'btn-blue',
+        action() {
+          cost(name);
+        },
+      },
+    },
   });
 }
 
-async function cost (name) {
-  let row = await this.getData(`cost/${name}`);
-  if(row > 0) {
+async function cost(name) {
+  const row = await this.getData(`cost/${name}`);
+  if (row > 0) {
     find(name);
     tip('OK, 操作成功！');
   }
 }
 
 function render(user) {
-  $(".results").empty();
+  $('.results').empty();
   let html = '';
   user.forEach(item => {
-    var button = '';
-    if(item.times>0){
-      button = `<button  class="shinydarken enable" onclick="goCost('${item.name}')">消费</button>`
-    }else{
-      button = `<button  disabled  class="shinydarken disabled">消费</button>`
+    let button = '';
+    if (item.times > 0) {
+      button = `<button  class="shinydarken enable" onclick="goCost('${item.name}')">消费</button>`;
+    } else {
+      button = '<button  disabled  class="shinydarken disabled">消费</button>';
     }
     html += `<div class="card">
               <div class="items" onclick="showItems('${item.name}')">${item.name}</div>
@@ -147,33 +147,34 @@ function render(user) {
                 <button class="shiny" onclick="goUpdate('${item.name}',this)">续卡</button>
                 ${button}
               </cite>
-            </div>`
-            // <button  disabled class="shinydarken" onclick="cost(${item.id})">消费</button>
+            </div>`;
+    // <button  disabled class="shinydarken" onclick="cost(${item.id})">消费</button>
   });
-  $(".results").append(html);
+  $('.results').append(html);
 }
 
-async function showItems(name){
+async function showItems(name) {
   $.dialog({
-      title: '消费记录详情',
-      content: `url:${hostname}/items/${name}`,
-      animation: 'scale',
-      columnClass: 'medium',
-      closeAnimation: 'scale',
-      backgroundDismiss: true,
+    title: '消费记录详情',
+    content: `url:${hostname}/items/${name}`,
+    animation: 'scale',
+    columnClass: 'medium',
+    closeAnimation: 'scale',
+    backgroundDismiss: true,
   });
 }
 
-async function all () {
-  let user = await this.getData("all");
-  $("#inform").empty();
+async function all() {
+  const user = await this.getData('all');
+  $('#inform').empty();
   render(user);
 }
 
-function tip(text){
-  $('.bounceInDown').html(text).fadeIn(500).delay(2000).slideUp(500);
+function tip(text) {
+  $('.bounceInDown').html(text).fadeIn(500)
+    .delay(2000)
+    .slideUp(500);
 }
 
 all();
-
 
