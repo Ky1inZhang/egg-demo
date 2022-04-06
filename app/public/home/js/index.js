@@ -4,7 +4,7 @@ const req = axios.create({
   baseURL: hostname,
 });
 
-const getData = async url => {
+var getData = async (url) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       req.get(url).then(res => {			// url:http://127.0.0.1:80/api
@@ -171,9 +171,7 @@ async function all() {
 }
 
 function tip(text) {
-  $('.bounceInDown').html(text).fadeIn(500)
-    .delay(2000)
-    .slideUp(500);
+  $('.bounceInDown').html(text).fadeIn(500).delay(2000).slideUp(500);
 }
 
 all();
